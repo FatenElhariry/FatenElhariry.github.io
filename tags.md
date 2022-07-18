@@ -1,5 +1,8 @@
 ---
+layout: page
 title: Tags
+permalink: /Tags/
+main_nav: true
 ---
 
 All blog posts, grouped by tags.
