@@ -20,7 +20,7 @@ description: >
 # root of your server.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "" # the base hostname & protocol for your site
-cover: "/assets/header_image.jpg"
+cover: "/assets/header_image.png"
 logo: "/assets/logo.png"
 
 # Build settings
@@ -79,21 +79,21 @@ social:
   - name: Twitter
     icon: twitter
     username: TheBenCentra
-    url: https://twitter.com/TheBenCentra
+    url: https://twitter.com/aelhariry78
     desc: Follow me on Twitter
     share: true
 
   - name: Facebook
     icon: facebook
-    username: thebencentra
+    username: f.elhariry
     url: ""
     desc: Friend me on Facebook
     share: true
 
   - name: GitHub
     icon: github
-    username: bencentra
-    url: https://github.com/bencentra
+    username: Faten Elhariry
+    url: https://github.com/FatenElhariry
     desc: Fork me on GitHub
     share: false
 
@@ -104,12 +104,12 @@ social:
     desc: Connect with me on LinkedIn
     share: true
 
-  - name: Google+
-    icon: google-plus
-    username: ""
-    url: ""
-    desc: Add me to your Circles
-    share: true
+  # - name: Google+
+  #   icon: google-plus
+  #   username: ""
+  #   url: ""
+  #   desc: Add me to your Circles
+  #   share: true
 
   - name: YouTube
     icon: youtube
