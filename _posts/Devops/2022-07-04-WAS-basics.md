@@ -268,7 +268,6 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
     - if you are using the power shell file use this syntax 
       - `aws cloudformation create-stack --stack-name $1 --template-body file://$2  --parameters file://$3 --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-west-2`
       - Batch Script You can also try a batch script (.bat) with a similar syntax, except that the actual values can be written as `%1` instead as `$1`.
-      - []()
 
 #### What is Stack in cloudFormation?
   it is agroup of resources 
