@@ -272,3 +272,14 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
 
 #### What is Stack in cloudFormation?
   it is agroup of resources 
+
+#### AWS Diagrams
+  are a very important starting point for planning your cloud infrastructure. DevOps engineers start with a visual representation of the required cloud infrastructure before they turn it into code. This lesson will show you how to interpret these infrastructure diagrams.
+##### PVC 
+  - allow set of internal devices to connect to each other 
+  - it is not allowed to connect the internet except you enable the internet connection 
+  - it allow you to build a seperate network like if you need to add production and development Environment (completely seperate and isolated network traffic)
+  - can be split further to small network using subnet 
+    - you can use one subnet in one datacenter and another one in different datacenter (which allow to enforce HA if one datacenter become not avaliable you still see the second one) 
+    - here you can see sample diagram for the network 
+  <img src="/images/sample_diagram.png" />
