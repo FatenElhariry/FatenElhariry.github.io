@@ -274,11 +274,48 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
 
 #### AWS Diagrams
   are a very important starting point for planning your cloud infrastructure. DevOps engineers start with a visual representation of the required cloud infrastructure before they turn it into code. This lesson will show you how to interpret these infrastructure diagrams.
+  - **Cloud Container**
+    This represents your AWS account and all resources it can access.
+  - **Region**
+    A local business may be entirely contained in a region. So, if all your applications are always going to be deployed in the AWS Northern California region ( us-west-1 ) -for example- then you don’t need to specify this in your diagrams because all your co-workers will already know this.
+
+    The exception would be if you are designing a multi-region architecture, say, for Disaster Recovery reasons. In this case, it’s certainly useful to specify the region you are talking about, in your diagrams.
+  [reding part for diagram design](https://d1.awsstatic.com/whitepapers/building-a-scalable-and-secure-multi-vpc-aws-network-infrastructure.pdf)
+  [my diagram demo](https://lucid.app/lucidchart/f07b163a-c5d8-4db3-a242-1275babf596a/edit?view_items=49GzW84IK5Ze&invitationId=inv_2fca93e4-784b-4a53-acce-202774414b83#)
+  ##### Tips in Drawing the daigram 
+    - Choose to have more than one availability zone to avoid a single point of failure. such as if you put everything in the same avaliability Zone AZ if something happened in this place it will go down
+    - make sure that you have two of everything to ensure AZ  
+    - You may choose to reduce to one AZ, possibly for prototyping and design for low cost. But it is not recommended for production environments.
+
 ##### PVC 
   - allow set of internal devices to connect to each other 
   - it is not allowed to connect the internet except you enable the internet connection 
   - it allow you to build a seperate network like if you need to add production and development Environment (completely seperate and isolated network traffic)
   - can be split further to small network using subnet 
     - you can use one subnet in one datacenter and another one in different datacenter (which allow to enforce HA if one datacenter become not avaliable you still see the second one) 
+    - what is VPC and subnet 
+      - the main attribute of VPC is the block of avaliable IP addresses (address base, CIDR Block)
+        - example `10.0.0.0/16`
+          - the first two numbers will be the fix part of this network it is similar the area code in the phone number
+          - and the second two numbers represent the available IPs in the network it 256 * 256 
+        - subnet it as small subset of this network 
+          - it create logical seperation between resources 
+          - allow easily block or allow access to resources 
+          - provide service to spacific resources and not the other like public netwoek access  
+    - **the main goal of PVC it to provided private IP address space for the network and resources can be used over more than one AZ,The equivalent of this would be a data center**
+    - **the subnet is a subset of the VPC that allow logical seperation**
+    - **/00 denote the fixed part of the network and the avaliable IPs**
     - here you can see sample diagram for the network 
+  - Reference 
+    - [Classes Inter Domain Routing(CIDR)](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing)
+    - [VPCs and Subnets in AWS](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html)
   <img src="/images/sample_diagram.png" />
+
+- **Subnets**
+  - A subnet is a subset of the overall VPC network and it only exists in a single availability zone, unlike its parent network, the VPC.
+  -A subnet contains resources, and can be assigned access rights that apply to all resources within that subnet.
+  - Subnets can be public or private. Public subnets are accessible to external users. Private subnets are only accessed internally by other resources within your cloud container.
+
+- **Use IP addresses for routing traffic**
+  - Use IP addresses as the “keys” for routing traffic. We can route traffic to stay within the VPC, or within a particular subnet, for security reasons.
+  - For example, a database or any sensitive data will be placed in a private subnet. A public server, like a web server, can be placed in a public subnet. Routing rules applied to a subnet allow us to define access to all resources placed inside that subnet.

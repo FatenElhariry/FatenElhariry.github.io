@@ -1,7 +1,9 @@
 ---
 layout: post
 title: git commands!
-published: false
+author: Faten Elhariry
+categories: git
+tags: git
 ---
 - `git remote prune origin`: 
   This helper deletes all outdated local branches, which don't exist on the remote anymore. 
