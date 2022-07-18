@@ -1,3 +1,10 @@
+---
+layout: post
+title: Linux admin 1
+author: Faten Elhariry
+categories: [Devops, Linux]
+tags: AWS Devops lunix
+---
 # Linux admin 1 
 
 ## Linux history 
