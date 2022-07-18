@@ -205,7 +205,7 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
   - Infrastructure as a Service (IaaS). &rarr; allows a user to provision Virtual Machines (VMs), set up networks (VPC), create subnets, and associate necessary security features. Further, VMs can be attached to storage volumes, different networks, or servers. All the resources mentioned above are referred to as Infrastructure.
   - Cloud is a collection of geographically distributed data centers that are logically grouped into regions and availability-zones.
   ##### the below image provide the basic services provided in Iaas
-  <img src="../images/aws-services.png" />
+  <img src="/images/aws-services.png" />
 
 #### Devops benefits
   - Increase the speed of software delivery

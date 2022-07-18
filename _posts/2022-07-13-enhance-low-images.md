@@ -8,7 +8,7 @@ in this trial I will try to find solution to the problem documented in [this pap
   - A Gabor filter can be viewed as a **sinusoidal signal** of particular frequency and orientation, modulated by a Gaussian wave.
     - **sine wave, sinusoidal wave**: just sinusoid is a mathematical curve defined in terms of the sine trigonometric function
     - can be define by **frequency and orientation**
-    <img src="../images/sinusoidal_wave.png" />
+    <img src="/images/sinusoidal_wave.png" />
   ##### Example 
     Consider an example of elephant which has pattern or stripes on its skin at different orientation. Now to highlight or extract out all those patterns we are going to use a bank of 16 Gabor filters at an orientation of 11.250 (i.e. if the first filter is at 00, then the second will be at 11.250, the third will be at 22.50, and so on.).The figure 2 shows all the filter bank of 16 filters
     - A 2D Gabor filter can be viewed as a sinusoidal signal of particular frequency and orientation, modulated by a Gaussian wave.
