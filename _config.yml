@@ -9,12 +9,12 @@ exclude:
   - "/vendor/"
 
 # Site settings
-title: Centrarium
-subtitle: "A simple yet classy theme for your Jekyll website or blog"
-email: blcentra@gmail.com
-name: Ben Centra
+title: Faten Elhariry
+subtitle: "My short notes and thoughts"
+email: aelhariry78@gmail.com
+name: Faten Elhariry
 description: >
-  A simple yet classy theme for your Jekyll website or blog.
+  My short notes and thoughts.
 # Base URL of site (i.e. /blog). It should always start with a slash,
 # and never end with a slash. Set it to a blank value if hosting at the
 # root of your server.
@@ -47,7 +47,7 @@ jekyll-archives:
     tag: '/tag/:name/'
 
 # Disqus comments
-# disqus_shortname: bencentra
+# disqus_shortname: FatenElhariry
 
 # Google analytics
 # ga_tracking_id: "UA-XXXX-1"
@@ -71,14 +71,14 @@ descriptions:
 # social:
 #   - name: Twitter                         # Name of the service
 #     icon: twitter                         # Font Awesome icon to use (minus fa- prefix)
-#     username: "@TheBenCentra"             # (User) Name to display in the footer link
-#     url: https://twitter.com/TheBenCentra # URL of your profile (leave blank to not display in footer)
+#     username: "@TheFatenElhariry"             # (User) Name to display in the footer link
+#     url: https://twitter.com/TheFatenElhariry # URL of your profile (leave blank to not display in footer)
 #     desc: Follow me on Twitter            # Description to display as link title, etc
 #     share: true                           # Include in the "Share" section of posts
 social:
   - name: Twitter
     icon: twitter
-    username: TheBenCentra
+    username: TheFatenElhariry
     url: https://twitter.com/aelhariry78
     desc: Follow me on Twitter
     share: true
@@ -199,6 +199,6 @@ protocols:
 
     twitter_image: "/assets/logo.png"
 
-    os_repo: "https://github.com/bencentra/centrarium.com"
+    os_repo: "https://github.com/FatenElhariry/centrarium.com"
     os_rcs_type: "git"
-    os_src: "git@github.com:bencentra/centrarium.com.git"
+    os_src: "git@github.com:FatenElhariry/centrarium.com.git"

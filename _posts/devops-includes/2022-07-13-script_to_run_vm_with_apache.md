@@ -1,3 +1,10 @@
+---
+layout: page
+title: script to run apache in lunix 
+author: Faten Elhariry
+categories: includes
+tags: AWS Devops EC2
+---
 - first go to Amazon machine image (AMI)
 - select the free tier machine t2.micro 
 - use all the default setting except for the security group you can use the first create one which all ssh and http connection in **inbound rules**

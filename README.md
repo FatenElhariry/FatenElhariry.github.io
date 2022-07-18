@@ -1,4 +1,4 @@
-# Centrarium [![Circle CI](https://circleci.com/gh/bencentra/centrarium/tree/master.svg?style=svg)](https://circleci.com/gh/bencentra/centrarium/tree/master)
+# Centrarium [![Circle CI](https://circleci.com/gh/FatenElhariry/centrarium/tree/master.svg?style=svg)](https://circleci.com/gh/FatenElhariry/centrarium/tree/master)
 
 A simple yet classy theme for your Jekyll website or blog. Customizable to fit your style or brand.
 
@@ -11,7 +11,7 @@ Built with these awesome libraries:
 * [HighlightJS][highlightjs]
 * [Lightbox][lightbox]
 
-Here's a [demo](http://bencentra.com/centrarium). It also works on [GitHub Pages](http://bencentra.github.io/centrarium/). I also use it for [my own website][bencentra].
+Here's a [demo](http://FatenElhariry.com/centrarium). It also works on [GitHub Pages](http://FatenElhariry.github.io/centrarium/). I also use it for [my own website][FatenElhariry].
 
 Inspired by dirkfabisch's [Mediator](https://github.com/dirkfabisch/mediator) theme, which I previously used for my own blog, as well as [Type Theme](http://rohanchandra.github.io/type-theme/).
 
@@ -32,7 +32,7 @@ This theme comes with a number of features, including:
 
 ## Installation
 
-If you're just getting started with Jekyll, you can use this repository as a starting point for your own site. Just [download this project](https://github.com/bencentra/centrarium/archive/master.zip) and add all the files to your project. Add your blog posts to the `posts/` directory, and create your pages with the proper Jekyll front matter (see `posts.html` for an example).
+If you're just getting started with Jekyll, you can use this repository as a starting point for your own site. Just [download this project](https://github.com/FatenElhariry/centrarium/archive/master.zip) and add all the files to your project. Add your blog posts to the `posts/` directory, and create your pages with the proper Jekyll front matter (see `posts.html` for an example).
 
 If your site already uses Jekyll, follow these steps:
 
@@ -54,7 +54,7 @@ bundle install
 
 This theme is ready to import into Stackbit. This theme can be deployed to Netlify and you can connect any headless CMS including Forestry, NetlifyCMS, DatoCMS or Contentful. 
 
-[![Create with Stackbit](https://assets.stackbit.com/badge/create-with-stackbit.svg)](https://app.stackbit.com/create?theme=https://github.com/bencentra/centrarium)
+[![Create with Stackbit](https://assets.stackbit.com/badge/create-with-stackbit.svg)](https://app.stackbit.com/create?theme=https://github.com/FatenElhariry/centrarium)
 
 ## Updating Header and Footer Links
 
@@ -170,8 +170,8 @@ Your personal social network settings are combined with the social sharing optio
 social:
   - name: Twitter                         # Name of the service
     icon: twitter                         # Font Awesome icon to use (minus fa- prefix)
-    username: TheBenCentra                # (User) Name to display in the footer link
-    url: https://twitter.com/TheBenCentra # URL of your profile (leave blank to not display in footer)
+    username: TheFatenElhariry                # (User) Name to display in the footer link
+    url: https://twitter.com/TheFatenElhariry # URL of your profile (leave blank to not display in footer)
     desc: Follow me on Twitter            # Description to display as link title, etc
     share: true                           # Include in the "Share" section of posts
 ```
@@ -227,13 +227,13 @@ Please follow these steps:
 1. Fork/clone this repository.
 2. Develop (and test!) your changes.
 3. Open a pull request on GitHub. A description and/or screenshot of changes would be appreciated!
-4. I ([Ben Centra](https://github.com/bencentra)) will review and merge the pull request.
+4. I ([Ben Centra](https://github.com/FatenElhariry)) will review and merge the pull request.
 
 ## License
 
-MIT. See [LICENSE.MD](https://github.com/bencentra/centrarium/blob/master/LICENSE.md).
+MIT. See [LICENSE.MD](https://github.com/FatenElhariry/centrarium/blob/master/LICENSE.md).
 
-[bencentra]: http://bencentra.com
+[FatenElhariry]: http://FatenElhariry.com
 [bourbon]: http://bourbon.io/
 [neat]: http://neat.bourbon.io/
 [bitters]: http://bitters.bourbon.io/
