@@ -20,13 +20,8 @@ description: >
 # root of your server.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "" # the base hostname & protocol for your site
-<<<<<<< HEAD
 cover: "/assets/header_image.png"
 logo: "/assets/logo1.png"
-=======
-cover: "/assets/header_image.jpg"
-logo: "/assets/logo.png"
->>>>>>> parent of 5289698 (- new initial)
 
 # Build settings
 markdown: kramdown
