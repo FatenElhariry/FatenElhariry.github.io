@@ -200,6 +200,7 @@ protocols:
 
     twitter_image: "/assets/logo1.png"
 
-    os_repo: "https://github.com/FatenElhariry/centrarium.com"
+    os_repo: "https://github.com/bencentra/centrarium.com"
     os_rcs_type: "git"
-    os_src: "git@github.com:FatenElhariry/centrarium.com.git"
+    os_src: "git@github.com:bencentra/centrarium.com.git"
+
