@@ -57,7 +57,8 @@
 $(document).ready(function() {
   // Default syntax highlighting
   hljs.initHighlightingOnLoad();
-
+  
+  console.log(`{{ site | jsonify }}`);
   // Header
   var menuToggle = $('#js-mobile-menu').unbind();
   $('#js-navigation-menu').removeClass("show");
