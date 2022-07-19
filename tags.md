@@ -17,10 +17,3 @@ All blog posts, grouped by tags.
 {% endfor %}
 {% endfor %}
 
-
-<script>
-  window.addEventListener("DOMContentLoaded", function () {
-    console.log('This the some page');
-    console.log(`{{ site | jsonify }}`)
-  });
-</script>

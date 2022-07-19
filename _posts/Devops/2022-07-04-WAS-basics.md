@@ -332,3 +332,12 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
   - An internet gateway allows external users access to communicate with parts of your VPC.
   - If you create a private VPC for an application that is internal to your company, you will not need an internet gateway.
 [Read more about Internet Gateways](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html)
+- **Network Address Translation (NAT) Gateway**
+  It provides a way for servers/instances in the private subnet to access the Internet, for example, servers downloading the software or security patches. NAT Gateway keeps the private instances protected from unsolicited inbound connections from the Internet.
+  - To provide outbound internet access to resources in the private subnets, we configure the NAT gateway to route the outbound requests to the Internet gateway for the VPC. While routing the outbound requests, the NAT gateway replaces the source instances' (private) IP address with NAT's own (public) IP address.
+  - When sending the "response" traffic back to the instances, the NAT gateway translates the addresses back to the original source IP address, meaning it "translates" the incoming response into private traffic.
+  - In summary, the NAT gateway serves as an intermediary to take a private resource's request, connect to the Internet, and then relay the response back to the private resource without exposing that private resource's IP address to the public.
+  - **NAT Gateway needs public access itself; remember to place it in the public subnet. Place NAT gateway inside the public subnet** so that it can communicate with the public Internet and handle requests from resources in a private subnet.
+**Reference:** [AWS Network Address Translation (NAT) Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html)
+
+
