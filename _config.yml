@@ -20,8 +20,13 @@ description: >
 # root of your server.
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "" # the base hostname & protocol for your site
+<<<<<<< HEAD
 cover: "/assets/header_image.png"
 logo: "/assets/logo1.png"
+=======
+cover: "/assets/header_image.jpg"
+logo: "/assets/logo.png"
+>>>>>>> parent of 5289698 (- new initial)
 
 # Build settings
 markdown: kramdown
@@ -79,22 +84,27 @@ descriptions:
 social:
   - name: Twitter
     icon: twitter
+<<<<<<< HEAD
     username: TheFatenElhariry
     url: https://twitter.com/aelhariry78
+=======
+    username: TheBenCentra
+    url: https://twitter.com/TheBenCentra
+>>>>>>> parent of 5289698 (- new initial)
     desc: Follow me on Twitter
     share: true
 
   - name: Facebook
     icon: facebook
-    username: f.elhariry
+    username: thebencentra
     url: ""
     desc: Friend me on Facebook
     share: true
 
   - name: GitHub
     icon: github
-    username: Faten Elhariry
-    url: https://github.com/FatenElhariry
+    username: bencentra
+    url: https://github.com/bencentra
     desc: Fork me on GitHub
     share: false
 
@@ -105,12 +115,12 @@ social:
     desc: Connect with me on LinkedIn
     share: true
 
-  # - name: Google+
-  #   icon: google-plus
-  #   username: ""
-  #   url: ""
-  #   desc: Add me to your Circles
-  #   share: true
+  - name: Google+
+    icon: google-plus
+    username: ""
+    url: ""
+    desc: Add me to your Circles
+    share: true
 
   - name: YouTube
     icon: youtube
