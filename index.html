@@ -16,6 +16,7 @@ pagination:
 
 <div class="wrapper">
 <ul class="post-list">
+  {{site  | jsonify }}
   {% for post in paginator.posts reversed %}
   <li>
     <h2>
