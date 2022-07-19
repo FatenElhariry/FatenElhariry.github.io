@@ -87,8 +87,8 @@ pagination:
 </div>
 </div>
 <script>
-  document.onload = function () {
+  window.addEventListener("DOMContentLoaded", function () {
     console.log('This the some page');
     console.log(`{{ paginator | jsonify }}`)
-  }
+  });
 </script>
