@@ -38,7 +38,7 @@ highlightjs_theme: "monokai-sublime"
 pagination:
   enabled: true
   per_page: 5
-  permalink: "/page/:num/"
+  # permalink: "/page/:num/"
   sort_reverse: true
   category: Devops
 
@@ -48,9 +48,9 @@ jekyll-archives:
     - categories
     - tags
   layout: 'archive'
-  permalinks:
-    category: '/category/:name/'
-    tag: '/tag/:name/'
+  # permalinks:
+  #   category: '/category/:name/'
+  #   tag: '/tag/:name/'
 
 # Disqus comments
 # disqus_shortname: FatenElhariry
@@ -84,13 +84,8 @@ descriptions:
 social:
   - name: Twitter
     icon: twitter
-<<<<<<< HEAD
-    username: TheFatenElhariry
+    username: FatenElhariry
     url: https://twitter.com/aelhariry78
-=======
-    username: TheBenCentra
-    url: https://twitter.com/TheBenCentra
->>>>>>> parent of 5289698 (- new initial)
     desc: Follow me on Twitter
     share: true
 
