@@ -16,3 +16,11 @@ All blog posts, grouped by tags.
 - [{{ post.title }}]({{ post.url | relative_url }})
 {% endfor %}
 {% endfor %}
+
+
+<script>
+  window.addEventListener("DOMContentLoaded", function () {
+    console.log('This the some page');
+    console.log(`{{ site | jsonify }}`)
+  });
+</script>
