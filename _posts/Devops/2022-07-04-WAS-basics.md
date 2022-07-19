@@ -319,3 +319,16 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
 - **Use IP addresses for routing traffic**
   - Use IP addresses as the “keys” for routing traffic. We can route traffic to stay within the VPC, or within a particular subnet, for security reasons.
   - For example, a database or any sensitive data will be placed in a private subnet. A public server, like a web server, can be placed in a public subnet. Routing rules applied to a subnet allow us to define access to all resources placed inside that subnet.
+
+- to use the PVC you need to attach it with the internet gateway to be accessable or you can attach VPN instead for secure connection 
+- **VPN or Virtual Private Network**
+  It is a type of encrypted connectivity that You can setup between your on-premise data center and your Virtual Private Cloud. This allows access in and out of your AWS VPC in a secure manner, across the internet and using internal, Private IP addresses.
+
+- **DirectConnect**
+  It is a DirectConnect is a physical data line that you can purchase directly from AWS or through a telecommunication service provider to access your AWS Cloud without moving your data traffic across the public internet.  
+
+- **Internet Gateway**
+  - An internet gateway is a resource that enables inbound and outbound traffic from the internet to your VPC.
+  - An internet gateway allows external users access to communicate with parts of your VPC.
+  - If you create a private VPC for an application that is internal to your company, you will not need an internet gateway.
+[Read more about Internet Gateways](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html)
