@@ -1,3 +1,10 @@
+---
+layout: post
+title: Design pattern
+author: Faten Elhariry
+categories: Dev
+tags: Design pattern, Dev
+---
 ## this will be a summary for the video series [clean code](https://learning.oreilly.com/videos/clean-code-fundamentals/9780134661742/)
 ### Design pattern
   #### Observer Pattern

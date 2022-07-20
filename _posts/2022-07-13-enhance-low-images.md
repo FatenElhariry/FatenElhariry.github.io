@@ -1,3 +1,10 @@
+---
+layout: post
+title: image enhancement
+author: Faten Elhariry
+categories: Research
+tags: Research
+---
 in this trial I will try to find solution to the problem documented in [this paper](https://link.springer.com/article/10.1007/s11042-021-10607-7) so to break down this paper I will work on steps 
 
 ### Low illumination color image enhancement based on Gabor filtering and Retinex theory

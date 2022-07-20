@@ -1,6 +1,9 @@
 ---
 layout: post
 title: CloudFormation Template
+author: Faten Elhariry
+categories: Devops
+tags: Devops
 ---
 #### create cloudformation
   -  A resource must have a Type attribute, which defines the kind of AWS resource you want to create.
