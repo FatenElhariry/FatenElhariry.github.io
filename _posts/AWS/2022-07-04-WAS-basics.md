@@ -340,4 +340,39 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
   - **NAT Gateway needs public access itself; remember to place it in the public subnet. Place NAT gateway inside the public subnet** so that it can communicate with the public Internet and handle requests from resources in a private subnet.
 **Reference:** [AWS Network Address Translation (NAT) Gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html)
 
+#### Load Balancer
+  - A load balancer takes incoming traffic and distributes it to two or more resources. For example, it can take inbound user requests to access your website, and it can distribute the requests evenly among two or more servers.
+  - Without a load balancer, having public-facing servers in more than one AZ would mean that users would have to use a different URL to reach each of the AZs. This can be impractical compared to just a single URL.
+  - resources 
+    1. [Classic load balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/introduction.html)
+    2. [Application load balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html)
+    3. [Network load balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/introduction.html) 
+#### Security Groups
+  manage traffic at the server level (the resource level). Security Groups aren’t for managing higher-level groups such as subnets, VPC, or user accounts.
+  - The same security group can be assigned to multiple resources that require the same security access settings defined by that security group.
+  - You can assign an SG (firewall rule) either to an instance, load balancer, or database, etc., in your VPC. However, each SG can scope to one or more IP address anywhere on the Internet (such as giving access to yourself, allowing the entire network 0.0.0.0/0 )
+  - [reading](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
+#### Routing table 
+  The entries in a routing table are about information regarding how to "move traffic" not about allowing or denying traffic. A routing table defines the rules, meaning if a packet arrives for a particular destination, then it should be moved towards the defined target.
+
+
+  - To allow/deny traffic at the network/subnetwork level you have ACLs!.
+  - To allow/deny traffic at an instance level, you have security groups.
+
+  - [Read more about route tables](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html)
+
+#### S3 (simple storage service)
+  - An S3 bucket is a public service for users to upload or download files.
+  - Place the S3 service outside of your VPC.
+  - it contains Images, Video, large text files, log files, audit logs are all great uses for S3. Log files should be cleaned of all sensitive data prior to storing them in S3 as a shared resource for your team or company.
+
+**Review the AWS Reference Architecture Page**
+  Visit the [AWS Reference Architecture Page](https://aws.amazon.com/architecture/) and study some of the diagrams. As a case-study, pay particular attention to [WordPress Architecture](https://github.com/aws-samples/aws-refarch-wordpress), which is the CMS software that runs on nearly 60% of all sites on the internet.
+
+##### tips 
+  - you Shouldn't I include hostnames and IP addresses in my cloud diagrams
+
+##### Example 
+  <img src="/images/AWSWebApp.jpeg" />
+
 
