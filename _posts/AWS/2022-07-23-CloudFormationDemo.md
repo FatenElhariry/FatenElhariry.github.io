@@ -7,3 +7,5 @@ tags: AWS Devops EC2
 ---
 
 ## CloudFormation
+  <img src="/images/sample_diagram.png" />
+  _this what we are going to build_
