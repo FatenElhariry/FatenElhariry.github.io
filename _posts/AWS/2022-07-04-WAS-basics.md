@@ -378,4 +378,112 @@ Within AWS WAF service, you can create Web access control lists (web ACLs) to mo
 
 #### cloudFormation
   [CloudForamtion Demo](/devops/2022/07/23/CloudFormationDemo.html)
+  - **file Sturcture**
+    - **Format version**: The AWSTemplateFormatVersion section is optional. The current valid value is 2010-09-09. You can add it to your file as:
+    `AWSTemplateFormatVersion: 2010-09-09`
+    - **Description**: TheDescription field is also optional. Here we start by adding a short description of the project we are working on.
+    `
+    AWSTemplateFormatVersion: 2010-09-09
+    Description: Carlos Rivas / Udacity - This template deploys a VPC
+    ` 
+    - **Resouces**: Although a description is optional, the Resources section is required. Remember to include at least one resource (e.g., a VPC, an EC2 instance, a database) in the CloudFormation template, otherwise, it will give an error when you try to run the script.
+    `
+    AWSTemplateFormatVersion: 2010-09-09
+    Description: Carlos Rivas / Udacity - This template deploys a VPC
+    Resources:
+    UdacityVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: 'true'
+    ` 
+    Reference: [Template anatomy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html)
+  
+  - create.sh: This file contains the `create-stack` command, which expects three command-line arguments.
+    `aws cloudformation create-stack --stack-name $1 --template-body file://$2  --parameters file://$3 --region=us-east-1`
+  - update.sh: This file contains the update-stack command, and this too expects three command-line arguments.
+    `aws cloudformation update-stack --stack-name $1 --template-body file://$2  --parameters file://$3 --region=us-east-1` 
+- **Parameters**
+  It contains the list of parameters that are being used in the current CloudFormation template. Parameters should be declared above your Resources. Any value that you consider to change in the future, put it as a parameter instead of hard-coding it into your script. Note that each parameter is further defined with the following properties (or fields):
 
+    1. Parameter Name - You can provide the name of your choice
+    2. Description - A textual value
+    3. Type - Identifies the data type of the parameter, such as String or a Number
+    4. Default (optional) - Presents the default value of the parameter
+    5. AllowedValues (optional) - Presents the list of all possible values. 
+  `
+    Parameters:
+        EnvironmentName:
+            Description: An Environment name that will be prefixed to resources
+            Type: String
+
+        VpcCIDR:
+            Description: Please enter the IP range (CIDR notation) for this
+            Type: String
+            Default: 10.0.0.0/16
+  ` 
+- **Resources**: 
+  This (mandatory) section declares the AWS resources that you want to include in the stack, such as Servers, Gateways, VPN Connections, and more. We learned earlier that the Resource section is mandatory. You must include at least one resource (e.g., a VPC, and an internet gateway) in the CloudFormation template, otherwise, it will give an error when you try to run the script.
+  - Each resource is defined with the help of fields, such as Name, Resource type, and Resource properties.
+    1. Name - It is a string value representing the resource name. You can use a name of your choice.
+    2. Resource type - The resource type identifies the type of resource that you are declaring. For example, `Type: AWS::EC2::VPC` creates a VPC. You can view [the AWS resource and property types reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for a complete list of possible resources you can provision.
+    3. Resource properties - The resource Properties field has further sub-fields that are specific to each type of resource. See an example below.
+     
+  _Reference: Refer to the [Resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html) documentation for learning more about resource fields, and see more examples._
+
+- **Outputs**: 
+  This section declares output values for each resource that you can import into other stacks. For example, you can output the VPC ID for a stack to make it easier to find from another stack/template. You should not output any sensitive information, such as passwords or secrets. For each resource's output, you will have to provide the following:
+  1. Description (optional) - A string
+  2. Value (required) - The property returned by the aws cloudformation describe-stacks command.
+  3. Export (optional) - The name of the resource output to be exported for a cross-stack reference.
+  _Reference: Refer to the [Outputs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html) documentation for examples._
+
+##### run cloudFormation with parameters 
+  `aws cloudformation create-stack --stack-name ourdemoinfra --template-body file://ourinfra.yml    --parameters file://ourinfra.json  --region=us-east-1`
+
+##### AWS Documentation Resources
+  [EC2 resource type reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_EC2.html) - A list of all resources that are needed for an EC2 instance, such as VPC, internet gateway, or a VPCCidrBlock. We encourage you to follow the examples and more details about the following resources:
+  - [AWS::EC2::VPC](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html)
+  - [AWS::EC2::VPCCidrBlock](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpccidrblock.html)
+  - [AWS::EC2::InternetGateway](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-internetgateway.html)
+  - [AWS::EC2::VPCGatewayAttachment](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc-gateway-attachment.html)
+
+  - Supporting Materials
+    - [network.yml](https://video.udacity-data.com/topher/2021/February/60179e28_network/network.yml)
+    - [network-parameters.json](https://video.udacity-data.com/topher/2021/February/6017d5b6_network-parameters/network-parameters.json)
+  - Demo VPC with internet
+  `
+    Resources:
+    VPC: 
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: !Ref VpcCIDR
+            EnableDnsHostnames: true
+            Tags: 
+                - Key: Name 
+                  Value: !Ref EnvironmentName            
+    InternetGateway:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: !Ref EnvironmentName
+
+    InternetGatewayAttachment:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            InternetGatewayId: !Ref InternetGateway
+            VpcId: !Ref VPC
+  `
+  <img src="/images/Devops/1.png" />
+
+
+##### Points to notice in the code above:
+  - `!Ref VPC` is referencing to the VPC created earlier.
+  - `!Ref PrivateSubnet1CIDR` is referencing to the **PrivateSubnet1CIDR** parameter. For this parameter, we have already defined the default value as `10.0.2.0/24`. Similarly, the **PrivateSubnet2CIDR** parameter is being used in the above code.
+  - Notice that our private subnets **are not** sharing availability zones. We are keeping them separated as we displayed in our diagrams from the previous lesson. To do so, the `!GetAZs‘’` function fetches the list of AZs in your region which are indexed 0, 1, etc. Then, the `!select [0, !GetAZs‘’]` returns only the first AZ.
+  - For PrivateSubnet1, the `!Select [ 0, !GetAZs '' ]` is returning the **first AZ** from the list of all AZs in your region. Similarly, for **PrivateSubnet2**, the `!Select [ 1, !GetAZs '' ]` will return the second AZ.
+
+
+_Everything in AWS is disposable so if you need IP that never change use  Elastic IPs_
+_**DependsOn** if you need some script in the cloud formation wait another script to run first_
