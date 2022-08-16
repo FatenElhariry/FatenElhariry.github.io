@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  "Pro Microservices in .NET 6: With Examples Using ASP.NET Core 6, MassTransit, and Kubernetes"
+title:  'Pro Microservices in .NET 6: With Examples Using ASP.NET Core 6, MassTransit, and Kubernetes'
 author: Faten Elhariry
-categories: "Book Review"
-tags: microservice, "Book Review"
+categories: 'Book Review'
+tags: microservice, 'Book Review'
 ---
 
 this a quick review for [oreilly book](https://learning.oreilly.com/library/view/pro-microservices-in/9781484278338/)
