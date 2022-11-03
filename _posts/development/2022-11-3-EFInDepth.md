@@ -123,7 +123,7 @@ tags: development
       - _Hiding sensitive data_ —Hiding a person’s date of birth in a private field and making their age in years available to the rest of the software. 
       - Catching changes —Detecting an update of a property by storing the data in a private field and adding code in the setter to detect the update of a property. You will use this technique in chapter 12, when you use property change to trigger an event.
       - Creating Domain-Driven Design (DDD) entity classes —Creating DDD entity classes in which all the entity classes’ properties need to be read-only. Backing fields allow you to lock down navigational collection properties
-      <img src="../../images/development/EF/2.png" />
+      <img src="~/images/development/EF/2.png" />
       ```
         EF.Property<DateTime>(entity, "_dateOfBirth") 
 
@@ -170,3 +170,14 @@ tags: development
     Principal key —A new term, taken from EF Core’s documentation, that refers to either the primary key, defined in part 1, or the new alternate key, which has a unique value per row and isn’t the primary key
   - **Principal entity**
     The entity that contains the principal-key properties, which the dependent relationship refer to via a foreign key(s)
+  - **Dependent entity**
+    The entity that contains the foreign-key properties that refer to the principal entity
+  - **Principal key**
+    the entity has a principal key, also known as the primary key, which is unique for each entity stored in the database
+  - **Navigational property**
+    A term taken from EF Core’s documentation that refers to the property containing a single entity class, or a collection of entity classes, that EF Core uses to link entity classes
+  - **Required relationship**
+    A relationship in which the foreign key is non-nullable (and principal entity must exist)
+  - **Optional relationship**
+    A relationship in which the foreign key is nullable (and principal entity can be missing)
+  
