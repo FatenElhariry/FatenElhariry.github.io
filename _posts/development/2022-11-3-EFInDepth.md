@@ -299,5 +299,26 @@ tags: development
     - **Creating a one-to-one relationship**
       One-to-one relationships can get a little complicated because there are three ways to build them in a relational database. To understand these options, you’ll look at an example in which you have attendees (entity class Attendee) at a software convention, and each attendee has a unique ticket (entity class Ticket).
       -  The principal entities are at the top of the diagram, and the dependent entities are at the bottom.
-      - the defined approach
+      - The three ways of defining a one-to-one relationship in a relational database
           <img src="../../images/development/EF/4.png" />
+        - illustrate it with ef fluent api 
+          <img src="../../images/development/EF/5.png" />
+        Options 2 and 3 in figure 8.5 turn the principal/dependent relationship around, with the Attendee becoming the principal entity in the relationship. This situation swaps the required/optional nature of the relationship. Now the Attendee can exist without the Ticket, but the Ticket can’t exist without the Attendee. Options 2 and 3 do enforce the assignment of a Ticket to only one Attendee, but replacing Ticket with another Ticket instance requires you to delete the old ticket first
+      - options 2, 3 
+        <img src="../../images/development/EF/6.png" />
+    - **Creating a one-to-many relationship**
+      - One-to-many relationships are simpler
+      - the many entities contain the foreign-key value. You can define most one-to-many relationships with the By Convention approach simply by giving the foreign key in the many entities a name that follows the By Convention approach 
+      <img src="../../images/development/EF/7.png" />
+      - Collections have a couple of features that are worth knowing about. First, you can use any generic type for a collection that implements the IEnumerable<T> interface, such as IList<T>, Collection<T>, HashSet<T>, List<T>, and so on. **IEnumerable<T> on its own is a special case, as you can’t add to that collection**.
+      - For performance reasons, you should use HashSet<T> for navigational collections, because it improves certain parts of EF Core’s query and update processes.
+      - But HashSet doesn’t guarantee the order of entries, which could cause problems if you add sorting to your Includes **it used the hash code to define the owrder of each property**
+      - That’s why I recommend in part 1 and 2 using ICollection<T> if you might sort your Include methods, as ICollection preserves the order in which entries are added. But in part 3, which is about performance, you don’t use sort in Includes so that you can use HashSet<T> for better performance.
+      - You can provide a getter only if you initialize the backing field with an empty collection. The following is also valid:
+      ```
+        public ICollection<Review> Reviews { get; } = new List<Review>();
+
+      ```
+      _Although initializing the collection might make things easier in this case, I don’t recommend initializing a navigational collection property. I have given my reasons for not initializing collection navigational properties in section 6.1.6._
+    - **Creating a many-to-many relationship**
+      
