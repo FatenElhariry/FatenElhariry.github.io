@@ -166,20 +166,7 @@ tags: development
                 }
             }
       ```
-  - **Principal key Vs alternate key**
-    Principal key —A new term, taken from EF Core’s documentation, that refers to either the primary key, defined in part 1, or the new alternate key, which has a unique value per row and isn’t the primary key
-  - **Principal entity**
-    The entity that contains the principal-key properties, which the dependent relationship refer to via a foreign key(s)
-  - **Dependent entity**
-    The entity that contains the foreign-key properties that refer to the principal entity
-  - **Principal key**
-    the entity has a principal key, also known as the primary key, which is unique for each entity stored in the database
-  - **Navigational property**
-    A term taken from EF Core’s documentation that refers to the property containing a single entity class, or a collection of entity classes, that EF Core uses to link entity classes
-  - **Required relationship**
-    A relationship in which the foreign key is non-nullable (and principal entity must exist)
-  - **Optional relationship**
-    A relationship in which the foreign key is nullable (and principal entity can be missing)
+
 ###### Dbcontext filters before update or create
   for enable soft delete in entityframework we did it in the modelCreating method to ensure we add user id that perform this action 
   ```
@@ -236,3 +223,78 @@ tags: development
           }
       } 
     ```
+#### Relationship   
+  - **Principal key Vs alternate key**
+    Principal key —A new term, taken from EF Core’s documentation, that refers to either the primary key, defined in part 1, or the new alternate key, which has a unique value per row and isn’t the primary key
+  - **Principal entity**
+    The entity that contains the principal-key properties, which the dependent relationship refer to via a foreign key(s)
+  - **Dependent entity**
+    The entity that contains the foreign-key properties that refer to the principal entity
+  - **Principal key**
+    the entity has a principal key, also known as the primary key, which is unique for each entity stored in the database
+  - **Navigational property**
+    A term taken from EF Core’s documentation that refers to the property containing a single entity class, or a collection of entity classes, that EF Core uses to link entity classes
+  - **Required relationship**
+    A relationship in which the foreign key is non-nullable (and principal entity must exist)
+  - **Optional relationship**
+    A relationship in which the foreign key is nullable (and principal entity can be missing)
+  - **navigation properties**
+    navigational property is useful, and some navigational properties aren’t. It is good practice to provide only navigational properties that make sense from the business or software design point of view.
+    _Example_
+      But do you need a fully defined relationship? From the software design point of view, there are two questions about the Book/Review navigational relationships. The answers to these questions define which navigational relationship you need to include:
+      - Does the Book entity class need to know about the Review entity classes? I say yes, because we want to calculate the average review score.
+      - Does the Review entity class need to know about the Book entity class? I say no, because in this example application, we don’t do anything with that relationship.
+      _My experience is you should add a navigational property only when it makes sense from a business point of view or when you need a navigational property to create (EF Core’s Add) an entity class with a relationship (see section 6.2.1). Minimizing navigational properties will help make the entity classes easier to understand, and more-junior developers won’t be tempted to use relationships that aren’t right for your project._
+  - **Configuring relationships By Convention**
+    - In this case, you have a public property of type DbSet<Book>, which passed the “must have a valid primary key” test in that it has a public property called BookId.
+    - If two navigational properties exist between the two entity classes, the relationship is known as fully defined
+    - EF Core can work out By Convention whether it’s a one-to-one or a one-to-many relationship. If only one navigational property exists, EF Core can’t be sure, **so it assumes a one-to-many relationship**.
+    - Certain one-to-one relationships may need configuration via the Fluent API if you have only one navigational property or if you want to change the default By Convention setting, such as when you’re deleting an entity class with a relationship
+  - **Nullability of foreign keys: Required or optional dependent relationships**
+    - defines whether the relationship is required (non-nullable foreign key) or optional (nullable foreign key)
+    - For a required relationship, EF Core sets the OnDelete action to Cascade. If the principal entity is deleted, the dependent entity will be deleted too.
+    - For a optional relationship, EF Core sets the OnDelete action to ClientSetNull. If the dependent entity is being tracked, the foreign key will be set to null when the principal entity is deleted. But if the dependent entity isn’t being tracked, the database constraint delete setting takes over, and the ClientSetNull setting sets the database rules as though the Restrict setting were in place. The result is that the delete fails at the database level, and an exception is thrown.
+  - My unit tests show that one-to-one relationships are rejected if there is no foreign key to link the two entities. Therefore, EF Core’s By Convention won’t set up shadow property foreign keys on one-to-one relationships automatically. **shadow properties becasue there is not navigation property for this relation**
+  - If you want to add a foreign key as a shadow property, you can do that via the Fluent API
+#### When does By Convention configuration not work?
+  - You have composite foreign keys
+  - You want to create a one-to-one relationship without navigational links going both ways
+  - You want to override the default delete-behavior setting
+  - You have two navigational properties going to the same class
+  - You want to define a specific database constraint
+  - **InverseProperty**
+    The Librarian and the borrower of the book (OnLoanTo navigational property) are both represented by the Person entity class. The Librarian navigational property and the OnLoanTo navigational property both link to the same class, and EF Core can’t set up the navigational linking without help. The InverseProperty Data Annotation shown in the following listing provides the information to EF Core when it’s configuring the navigational links.
+    ```
+      public class LibraryBook
+      {
+          public int LibraryBookId { get; set; }
+          public string Title { get; set; }
+      
+          public int LibrarianPersonId { get; set; }
+          public Person Librarian { get; set; }
+      
+          public int? OnLoanToPersonId { get; set; }
+          public Person OnLoanTo { get; set; }
+      }
+
+      public class Person
+      {
+          public int PersonId { get; set; }
+          public string Name { get; set; }
+      
+          [InverseProperty("Librarian")]      
+          public ICollection<LibraryBook> 
+              LibrarianBooks { get; set; }
+      
+          [InverseProperty("OnLoanTo")]       
+          public ICollection<LibraryBook> 
+              BooksBorrowedByMe { get; set; }
+      }
+    ```
+    _This code is one of those configuration options that you rarely use, but if you have this situation, you must either use it or define the relationship with the Fluent API. Otherwise, EF Core will throw an exception when it starts, as it can’t work out how to configure the relationships._
+  ##### 8.6 Fluent API relationship configuration commands
+    the Fluent API has a well-designed set of commands that cover all the possible combinations of relationships. It also has extra commands that allow you to define other database constraints.
+    <img src="../../../images/development/EF/3.png" />
+
+    - **Creating a one-to-one relationship**
+      
