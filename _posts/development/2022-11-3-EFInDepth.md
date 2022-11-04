@@ -39,7 +39,7 @@ tags: development
     .ToView("MyView");
   ```
   - **Index type**
-  <img src="../../images/development/EF/1.png" />
+  <img src="../../../images/development/EF/1.png" />
 
   - **more configuration over index**
     ```
@@ -123,7 +123,7 @@ tags: development
       - _Hiding sensitive data_ —Hiding a person’s date of birth in a private field and making their age in years available to the rest of the software. 
       - Catching changes —Detecting an update of a property by storing the data in a private field and adding code in the setter to detect the update of a property. You will use this technique in chapter 12, when you use property change to trigger an event.
       - Creating Domain-Driven Design (DDD) entity classes —Creating DDD entity classes in which all the entity classes’ properties need to be read-only. Backing fields allow you to lock down navigational collection properties
-      <img src="~/images/development/EF/2.png" />
+      <img src="../../../images/development/EF/2.png" />
       ```
         EF.Property<DateTime>(entity, "_dateOfBirth") 
 
@@ -180,4 +180,59 @@ tags: development
     A relationship in which the foreign key is non-nullable (and principal entity must exist)
   - **Optional relationship**
     A relationship in which the foreign key is nullable (and principal entity can be missing)
-  
+###### Dbcontext filters before update or create
+  for enable soft delete in entityframework we did it in the modelCreating method to ensure we add user id that perform this action 
+  ```
+      /// Enable soft delete 
+      foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+      {
+          
+          //other property code removed for clarity
+
+          if (typeof(ISoftDelete)
+          .IsAssignableFrom(entityType.ClrType))
+
+              entityType.AddSoftDeleteQueryFilter(MyQueryFilterTypes.SoftDelete);
+
+          if (typeof(IUserId).IsAssignableFrom(entityType.ClrType))
+              entityType.AddSoftDeleteQueryFilter(MyQueryFilterTypes.UserId /*, IUserId*/);
+          
+      }
+  ```
+  - class for handle this action 
+    ```
+      public enum MyQueryFilterTypes { SoftDelete, UserId }
+    public static class SoftDeleteQueryExtensions
+    {
+        public static void AddSoftDeleteQueryFilter(this IMutableEntityType entityData, MyQueryFilterTypes queryFilterType, IUserId userIdProvider = null)
+        {
+            var methodName = $"Get{queryFilterType}Filter";
+
+            var methodToCall = typeof(SoftDeleteQueryExtensions)
+                .GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static)
+                .MakeGenericMethod(entityData.ClrType);
+
+            var filter = methodToCall.Invoke(null, new object[] { userIdProvider});
+
+            entityData.SetQueryFilter((LambdaExpression)filter);
+            
+            if (queryFilterType == MyQueryFilterTypes.SoftDelete)
+                entityData.AddIndex(entityData.FindProperty(nameof(ISoftDelete.SoftDeleted)));
+
+            if (queryFilterType == MyQueryFilterTypes.UserId)
+                entityData.AddIndex(entityData.FindProperty(nameof(IUserId.UserId)));
+        }
+
+        private static LambdaExpression GetUserIdFilter<TEntity>(IUserId userIdProvider) where TEntity : class, IUserId
+        {
+            Expression<Func<TEntity, bool>> filter = x => x.UserId == userIdProvider.UserId;
+            return filter;
+        }
+
+        private static LambdaExpression GetSoftDeleteFilter<TEntity>( IUserId userIdProvider) where TEntity : class, ISoftDelete
+        {
+            Expression<Func<TEntity, bool>> filter = x => !x.SoftDeleted;
+            return filter;
+          }
+      } 
+    ```
