@@ -39,7 +39,7 @@ tags: development
     .ToView("MyView");
   ```
   - **Index type**
-  <img src="../../../images/development/EF/1.png" />
+  <img src="../../../../images/development/EF/1.png" />
 
   - **more configuration over index**
     ```
@@ -123,7 +123,7 @@ tags: development
       - _Hiding sensitive data_ —Hiding a person’s date of birth in a private field and making their age in years available to the rest of the software. 
       - Catching changes —Detecting an update of a property by storing the data in a private field and adding code in the setter to detect the update of a property. You will use this technique in chapter 12, when you use property change to trigger an event.
       - Creating Domain-Driven Design (DDD) entity classes —Creating DDD entity classes in which all the entity classes’ properties need to be read-only. Backing fields allow you to lock down navigational collection properties
-      <img src="../../../images/development/EF/2.png" />
+      <img src="../../../../images/development/EF/2.png" />
       ```
         EF.Property<DateTime>(entity, "_dateOfBirth") 
 
@@ -294,22 +294,22 @@ tags: development
     _This code is one of those configuration options that you rarely use, but if you have this situation, you must either use it or define the relationship with the Fluent API. Otherwise, EF Core will throw an exception when it starts, as it can’t work out how to configure the relationships._
   ##### 8.6 Fluent API relationship configuration commands
     the Fluent API has a well-designed set of commands that cover all the possible combinations of relationships. It also has extra commands that allow you to define other database constraints.
-    <img src="../../images/development/EF/3.png" />
+    <img src="../../../images/development/EF/3.png" />
 
     - **Creating a one-to-one relationship**
       One-to-one relationships can get a little complicated because there are three ways to build them in a relational database. To understand these options, you’ll look at an example in which you have attendees (entity class Attendee) at a software convention, and each attendee has a unique ticket (entity class Ticket).
       -  The principal entities are at the top of the diagram, and the dependent entities are at the bottom.
       - The three ways of defining a one-to-one relationship in a relational database
-          <img src="../../images/development/EF/4.png" />
+          <img src="../../../images/development/EF/4.png" />
         - illustrate it with ef fluent api 
-          <img src="../../images/development/EF/5.png" />
+          <img src="../../../images/development/EF/5.png" />
         Options 2 and 3 in figure 8.5 turn the principal/dependent relationship around, with the Attendee becoming the principal entity in the relationship. This situation swaps the required/optional nature of the relationship. Now the Attendee can exist without the Ticket, but the Ticket can’t exist without the Attendee. Options 2 and 3 do enforce the assignment of a Ticket to only one Attendee, but replacing Ticket with another Ticket instance requires you to delete the old ticket first
       - options 2, 3 
-        <img src="../../images/development/EF/6.png" />
+        <img src="../../../images/development/EF/6.png" />
     - **Creating a one-to-many relationship**
       - One-to-many relationships are simpler
       - the many entities contain the foreign-key value. You can define most one-to-many relationships with the By Convention approach simply by giving the foreign key in the many entities a name that follows the By Convention approach 
-      <img src="../../images/development/EF/7.png" />
+      <img src="../../../images/development/EF/7.png" />
       - Collections have a couple of features that are worth knowing about. First, you can use any generic type for a collection that implements the IEnumerable<T> interface, such as IList<T>, Collection<T>, HashSet<T>, List<T>, and so on. **IEnumerable<T> on its own is a special case, as you can’t add to that collection**.
       - For performance reasons, you should use HashSet<T> for navigational collections, because it improves certain parts of EF Core’s query and update processes.
       - But HashSet doesn’t guarantee the order of entries, which could cause problems if you add sorting to your Includes **it used the hash code to define the owrder of each property**
@@ -321,4 +321,3 @@ tags: development
       ```
       _Although initializing the collection might make things easier in this case, I don’t recommend initializing a navigational collection property. I have given my reasons for not initializing collection navigational properties in section 6.1.6._
     - **Creating a many-to-many relationship**
-      
