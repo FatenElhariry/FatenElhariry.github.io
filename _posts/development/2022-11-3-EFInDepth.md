@@ -39,7 +39,7 @@ tags: development
     .ToView("MyView");
   ```
   - **Index type**
-  <img src="../../../../images/development/EF/1.png" />
+  <img src="../../../../../images/development/EF/1.png" />
 
   - **more configuration over index**
     ```
@@ -123,7 +123,7 @@ tags: development
       - _Hiding sensitive data_ —Hiding a person’s date of birth in a private field and making their age in years available to the rest of the software. 
       - Catching changes —Detecting an update of a property by storing the data in a private field and adding code in the setter to detect the update of a property. You will use this technique in chapter 12, when you use property change to trigger an event.
       - Creating Domain-Driven Design (DDD) entity classes —Creating DDD entity classes in which all the entity classes’ properties need to be read-only. Backing fields allow you to lock down navigational collection properties
-      <img src="../../../../images/development/EF/2.png" />
+      <img src="../../../../../images/development/EF/2.png" />
       ```
         EF.Property<DateTime>(entity, "_dateOfBirth") 
 
@@ -294,22 +294,22 @@ tags: development
     _This code is one of those configuration options that you rarely use, but if you have this situation, you must either use it or define the relationship with the Fluent API. Otherwise, EF Core will throw an exception when it starts, as it can’t work out how to configure the relationships._
   ##### 8.6 Fluent API relationship configuration commands
     the Fluent API has a well-designed set of commands that cover all the possible combinations of relationships. It also has extra commands that allow you to define other database constraints.
-    <img src="../../../images/development/EF/3.png" />
+    <img src="../../../../images/development/EF/3.png" />
 
     - **Creating a one-to-one relationship**
       One-to-one relationships can get a little complicated because there are three ways to build them in a relational database. To understand these options, you’ll look at an example in which you have attendees (entity class Attendee) at a software convention, and each attendee has a unique ticket (entity class Ticket).
       -  The principal entities are at the top of the diagram, and the dependent entities are at the bottom.
       - The three ways of defining a one-to-one relationship in a relational database
-          <img src="../../../images/development/EF/4.png" />
+          <img src="../../../../images/development/EF/4.png" />
         - illustrate it with ef fluent api 
-          <img src="../../../images/development/EF/5.png" />
+          <img src="../../../../images/development/EF/5.png" />
         Options 2 and 3 in figure 8.5 turn the principal/dependent relationship around, with the Attendee becoming the principal entity in the relationship. This situation swaps the required/optional nature of the relationship. Now the Attendee can exist without the Ticket, but the Ticket can’t exist without the Attendee. Options 2 and 3 do enforce the assignment of a Ticket to only one Attendee, but replacing Ticket with another Ticket instance requires you to delete the old ticket first
       - options 2, 3 
-        <img src="../../../images/development/EF/6.png" />
+        <img src="../../../../images/development/EF/6.png" />
     - **Creating a one-to-many relationship**
       - One-to-many relationships are simpler
       - the many entities contain the foreign-key value. You can define most one-to-many relationships with the By Convention approach simply by giving the foreign key in the many entities a name that follows the By Convention approach 
-      <img src="../../../images/development/EF/7.png" />
+      <img src="../../../../images/development/EF/7.png" />
       - Collections have a couple of features that are worth knowing about. First, you can use any generic type for a collection that implements the IEnumerable<T> interface, such as IList<T>, Collection<T>, HashSet<T>, List<T>, and so on. **IEnumerable<T> on its own is a special case, as you can’t add to that collection**.
       - For performance reasons, you should use HashSet<T> for navigational collections, because it improves certain parts of EF Core’s query and update processes.
       - But HashSet doesn’t guarantee the order of entries, which could cause problems if you add sorting to your Includes **it used the hash code to define the owrder of each property**
@@ -321,3 +321,98 @@ tags: development
       ```
       _Although initializing the collection might make things easier in this case, I don’t recommend initializing a navigational collection property. I have given my reasons for not initializing collection navigational properties in section 6.1.6._
     - **Creating a many-to-many relationship**
+      -  you learned about the two types of many-to-many relationships:
+        - Your linking table contains information that you want to access when reading in the data on the other side of the many-to-many relationship. An example is the Book to Author many-to-many relationship, in which the linking table contains the order in which the Author Names should be shown.
+      - You directly access the other side of the many-to-many relationship. An example is the Book to Tag many-to-many relationship, in which you can directly access the Tags collection in the Book entity class without ever needing to access the linking table.
+      - In the Book/Author example, the By Convention configuration can find and link all the scalar and navigational properties so that the only configuration required is setting up the primary key. The following code snippet uses Fluent API in the application’s DbContext’s OnModelCreating method:
+      ```
+        protected override void OnModelCreating(ModelBuilder modelBuilder) 
+        {
+            modelBuilder.Entity<BookAuthor>() 
+                  .HasKey(x => new {x.BookId, x.AuthorId}); 
+        }
+      ```
+      - You can configure the four relationships in the many-to-many relationship by using the Fluent API with the code in the following listing. Note that the HasOne/WithMany Fluent API commands 
+      ```
+        public static void Configure(this EntityTypeBuilder<BookAuthor> entity)
+        {
+            entity.HasKey(p => 
+                new { p.BookId, p.AuthorId });    
+            //-----------------------------
+            //Relationships
+            entity.HasOne(p => p.Book)            
+                .WithMany(p => p.AuthorsLink)      
+                .HasForeignKey(p => p.BookId);    
+            entity.HasOne(p => p.Author)          
+                .WithMany(p => p.BooksLink)        
+                .HasForeignKey(p => p.AuthorId);  
+        }
+      ```
+    - **type two of many-to-many relation in ef(direct access to the collection navigation)**
+      <img src="../../../../images/development/EF/8.png" />
+      _But if you want to add your own linking table and configuration, you can do that via Fluent API configuration. The entity class for the linking table is similar to the BookAuthor linked entity class_
+    - **Configuring direct many-to-many relationships using Fluent API** 
+      ```
+        public void Configure(EntityTypeBuilder<Book> entity)
+        {
+            //... other configrations left out for clarity
+        
+            entity.HasMany(x => x.Tags)                              
+                .WithMany(x => x.Books)                              
+                .UsingEntity<BookTag>(                               
+                    bookTag => bookTag.HasOne(x => x.Tag)            
+                        .WithMany().HasForeignKey(x => x.TagId),     
+                    bookTag => bookTag.HasOne(x => x.Book)           
+                        .WithMany().HasForeignKey(x => x.BookId));   
+        }
+      ```
+      - The HasMany/WithMany sets up a direct many-to-many relationship.
+      - The UsingEntity<T> method allows you to define an entity class for the linking table.
+      - Defined Tag side of the many-to-many relationship, Defined Book side of the many-to-many relationship
+      [more about many-to-many](https://www.youtube.com/watch?v=BIImyq8qaD4&list=PLdo4fOcmZ0oVWop1HEOml2OdqbDs6IlcI)
+      ```
+      public class Book
+      {
+          private readonly ICollection<Review> _reviews = new List<Review>();                                 
+
+          public int BookId { get; set; }
+          public string Title { get; set; }
+          //... other properties/relationships left out
+      
+          public double? ReviewsAverageVotes { get; private set; }  
+      
+          public IReadOnlyCollection<Review> Reviews => _reviews.ToList();                                     
+
+          public void AddReview(Review review)                       
+          {
+              _reviews.Add(review);                                  
+              ReviewsAverageVotes =  _reviews.Average(x => x.NumStars);                 
+          }
+          public void RemoveReview(Review review)                    
+          {
+              _reviews.Remove(review);                               
+              ReviewsAverageVotes = _reviews.Any() ? _reviews.Average(x => x.NumStars) : (double?)null;                                   
+          }
+      }
+      ```
+      - You add a backing field, which is a list. By default, EF Core will read and write to this field.
+      - Holds a precalculated average of the reviews and is read-only, Returns a copy of the reviews in the _reviews backing field
+      - Adds a method to allow a new Review to be added to the _reviews collection
+      - Adds the new review to the backing field _reviews and updates the database on the call to SaveChanges
+      - Recalculates the average votes for the book,If there are any reviews, recalculates the average votes for the book
+      _You didn’t have to configure the backing field because you were using By Convention naming, and by default, EF Core reads and writes data to the _reviews field._
+    - **Additional methods available in Fluent API relationships**
+      - **OnDelete—Changes the delete action of a dependent entity**
+        ```
+          entity.HasOne(p => p.ChosenBook)
+              .WithMany()
+              .OnDelete(DeleteBehavior.Restrict); 
+        ```
+        _Adds the OnDelete method to the end of defining a relationship_
+        <img src="../../../../images/development/EF/10.png" />
+      - IsRequired—Defines the nullability of the foreign key
+      - HasPrincipalKey—Uses an alternate unique key
+      - HasConstraintName—Sets the foreign-key constraint name and MetaData access to the relationship data
+      
+
+##### table hierarchy tph vs tpt? 
