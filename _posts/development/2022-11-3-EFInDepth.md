@@ -294,7 +294,10 @@ tags: development
     _This code is one of those configuration options that you rarely use, but if you have this situation, you must either use it or define the relationship with the Fluent API. Otherwise, EF Core will throw an exception when it starts, as it can’t work out how to configure the relationships._
   ##### 8.6 Fluent API relationship configuration commands
     the Fluent API has a well-designed set of commands that cover all the possible combinations of relationships. It also has extra commands that allow you to define other database constraints.
-    <img src="../../../images/development/EF/3.png" />
+    <img src="../../images/development/EF/3.png" />
 
     - **Creating a one-to-one relationship**
-      
+      One-to-one relationships can get a little complicated because there are three ways to build them in a relational database. To understand these options, you’ll look at an example in which you have attendees (entity class Attendee) at a software convention, and each attendee has a unique ticket (entity class Ticket).
+      -  The principal entities are at the top of the diagram, and the dependent entities are at the bottom.
+      - the defined approach
+          <img src="../../images/development/EF/4.png" />
