@@ -461,7 +461,7 @@ tags: development
       }
       ```
       _Uses the HasForeignKey<T> method, which takes a string because it’s a shadow property and can be referred to only via a name. Note that you use your own name., The string parameter of the HasForeignKey<T>(string) method allows you to define the shadow foreign-key property name._
-  ##### HasPrincipalKey: Using an alternate unique key
+  - **HasPrincipalKey: Using an alternate unique key**
     - it is a unique value but not the primary key
     - I gave an example of an alternate key called UniqueISBN, which represents a unique key that isn’t the primary key
     - Example 
@@ -499,4 +499,100 @@ tags: development
       - Unique key values can be updated, but alternate keys can’t. (See EF Core issue [#4073 at](http://mng.bz/vzEM)
       - You can define a property as a standalone alternate key by using the Fluent API command, but you don’t need to do that, because using the HasPrincipalKey method to set up a relationship automatically registers the property as an alternate key.
       ```modelBuilder.Entity<Car>().HasAlternateKey(c => c.LicensePlate)```
+  - **HasConstraintName SETTING THE FOREIGN-KEY CONSTRAINT NAME**
+    allows you to set the name of the foreign-key constraint, which can be useful if you want to catch the exception on foreign-key errors and use the constraint name to form a more user-friendly error message [details](https://www.thereformedprogrammer.net/entity-framework-core-validating-data-and-catching-sql-errors/)
+  - **METADATA: ACCESS TO THE RELATIONSHIP INFORMATION**
+    property provides access to the relationship data, some of which is read/write. Much of what the MetaData property exposes can be accessed via specific commands, such as IsRequired, but if you need something out of the ordinary, look through the various methods/properties supported by the MetaData property.
+##### Alternative ways of mapping entities to database tables
+  Sometimes, it’s useful to not have a one-to-one mapping from an entity class to a database table. Instead of having a relationship between two classes, you might want to combine both classes into one table.
+  - This approach allows you to load only part of the table when you use one of the entities, which will improve the query’s performance.
+  - **wned types** 
+    Allows a class to be merged into the entity class’s table and is useful for using normal classes to group data.
+    - which allow you to define a class that holds a common grouping of data, such as an address or audit data, that you want to use in multiple places in your database. The owned type class doesn’t have its own primary key, so it doesn’t have an identity of its own; it relies on the entity class that “owns” it for its identity. In DDD terms, owned types are known as value objects.
+    - the data in an owned type can be configured to be saved in a separate, hidden table.
+    - _Here are two ways of using owned types:_
+      - The owned type data is held in the same table that the entity class is mapped to.
+      - The owned type data is held in a separate table from the entity class.
+      - **Example**
+        OrderInfo that needs two addresses: BillingAddress and DeliveryAddress. These addresses are provided by the Address class
+        You can mark an Address class as an owned type by adding the attribute [Owned] to the class. An owned type has no primary key
+        ```
+        public class OrderInfo                             
+        {
+            public int OrderInfoId { get; set; }
+            public string OrderNumber { get; set; }
+        
+            public Address BillingAddress { get; set; }   
+            public Address DeliveryAddress { get; set; }   
+        }
+        
+        [Owned]                                           
+        public class Address                              
+        {
+            public string NumberAndStreet { get; set; }
+            public string City { get; set; }
+            public string ZipPostCode { get; set; }
+            [Required]                                  
+            [MaxLength(2)]                              
+            public string CountryCodeIso2 { get; set; } 
+        } 
+        ```
+        - Two distinct Address classes. The data for each Address class will be included in the table that the OrderInfo is mapped to.
+        - The attribute [Owned] tells EF Core that it is an owned type., An owned type has no primary key.
+        - in this case you don’t need use the Fluent API to configure the owned type
+        - This approach saves you time, especially if your owned type is used in many places, because you don’t have to write the Fluent API configuration. But if you don’t want to use the [Owned] attribute
+        - The Fluent API to configure the owned types within OrderInfo
+          ```
+            public class SplitOwnDbContext: DbContext
+            {
+                public DbSet<OrderInfo> Orders { get; set; }
+                //... other code removed for clarity
+            
+                protected override void OnModelCreating (ModelBuilder modelBuilder)
+                {
+                  modelBulder.Entity<OrderInfo>()       
+                      .OwnsOne(p => p.BillingAddress);  
+
+                  modelBulder.Entity<OrderInfo>(DeliveryAddress);                            
+                  
+                }
+            }
+          ```
+          _Uses the OwnsOne method to tell EF Core that property BillingAddress is an owned type and that the data should be added to the columns in the table that the OrderInfo maps to_
+          **The result is a table containing the two scalar properties in the OrderInfo entity class, followed by two sets of Address class properties, one prefixed by BillingAddress_ and another prefixed by DeliveryAddress_. Because an owned type property can be null, all the properties are held in the database as nullable columns.**
+        - The fact that the owned type property can be null means that owned types within an entity class are a good fit for what DDD calls a value object. A value object has no key, and two value objects with the same properties are considered to be equal. The fact that they can be null allows for an “empty” value object.
+        - you can set it as required with convension or with fluent api like this 
+          ```
+          modelBulder.Entity<OrderInfo>()
+              .OwnsOne(p => p.BillingAddress);
+          modelBulder.Entity<OrderInfo>()     
+              .OwnsOne(p => p.DeliveryAddress);
+          modelBulder.Entity<OrderInfo>()      
+          .Navigation(p => p.DeliveryAddress)   
+              .IsRequired(); 
+          ```
+        -  are automatically created and filled with data when you read the entity. There’s no need for an Include method or any other form of relationship loading.
+        - Owned types can be nested. You could create a CustomerContact owned type, which in turn contains an Address owned type, for example. If you used the CustomerContact owned type in another entity class—let’s call it SuperOrder—all the CustomerContact properties and the Address properties would be added to the SuperOrder’s table.
+    - **OWNED TYPE DATA IS HELD IN A SEPARATE TABLE FROM THE ENTITY CLASS**
+      you’ll create a User entity class that has a property called HomeAddress of type Address. In this case, you add a ToTable method after the OwnsOne method in your configuration code.
+      ```
+      public class SplitOwnDbContext: DbContext
+      {
+          public DbSet<OrderInfo> Orders { get; set; }
+          //... other code removed for clarity
+      
+          protected override void OnModelCreating(ModelBuilder modelBuilder)
+          {
+            modelBulder.Entity<User>()
+                .OwnsOne(p => p.HomeAddress);
+                .ToTable("Addresses");        
+          }
+      }
+      ```
+      _ tells EF Core to store the owned type, Address, in a separate table, with a primary key equal to the primary key of the User entity that was saved to the database._
+      
+  - **Table per hierarchy (TPH)** Allows a set of inherited classes to be saved in one table, such as classes called Dog, Cat, and Rabbit that inherit from the Animal class.
+  - **Table per type (TPT)** Maps each class to a different table. This approach works like TPH except that each class is mapped to a separate table.
+  - **Table splitting** Allows multiple entity classes to be mapped to the same table and is useful when some columns in a table are read more often than all the table columns.
+  - **Property bags** —Allows you to create an entity class via a Dictionary, which gives you the option to create the mapping on startup. Property bags also use two other features: mapping the same type to multiple tables and using an indexer in your entity classes.
 ##### table hierarchy tph vs tpt? 
