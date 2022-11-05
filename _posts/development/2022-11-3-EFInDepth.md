@@ -413,6 +413,90 @@ tags: development
       - IsRequired—Defines the nullability of the foreign key
       - HasPrincipalKey—Uses an alternate unique key
       - HasConstraintName—Sets the foreign-key constraint name and MetaData access to the relationship data
+  - **Deleting a principal entity with an optional dependent entity**
+  ```
+  var entity = context.DeletePrincipals          
+    .Include(p => p.DependentDefault)          
+    .Single(p => p.DeletePrincipalId == 1);
+  
+  context.Remove(entity);                        
+  context.SaveChanges(); 
+  ```
+  _Note that if you don’t include the Include method or another way of loading the optional dependent entity, SaveChanges will throw a DbUpdateException because the database server will have reported a foreign-key constraint violation. One way to align EF Core’s approach to an optional relationship with the database server’s approach is to set the delete behavior to SetNull instead of the default ClientSetNull, making the foreign-key constraint in the database ON DELETE SET NULL (SQL Server) and putting the database in charge of setting the foreign key to null. Whether or not you load the optional dependent entity, the outcome of the called SaveChanges will be the same: the foreign key on the optional dependent entity will be set to null._
+- **IsRequired: Defining the nullability of the foreign key**
+  - defines whether the relationship is required or optional.
+  - The IsRequired method is most useful in shadow properties because EF Core makes shadow properties nullable by default, and the IsRequired method can change them to non-nullable.
+  - one-to-one relationships that use shadow properties for their foreign keys.
+    ```
+      public class Attendee
+      {
+          public int AttendeeId { get; set; }
+          public string Name { get; set; }
       
+          public int TicketId { get; set; }                  
+          public Ticket Ticket { get; set; }                
+          // One-to-one navigational property using a shadow property for the foreign key. By default, the foreign key is nullable, so the relationship is optional
+          public MyOptionalTrack Optional { get; set; }     
+          // One-to-one navigational property using a shadow property for the foreign key. You use Fluent API commands to say that the foreign key isn’t nullable, so the relationship is required
+          public MyRequiredTrack Required { get; set; }     
+      }
+    ```
+    _The Optional navigational property, which uses a shadow property for its foreign key, is configured by convention, which means that the shadow property is left as a nullable value. _
+    -  and if the Attendee entity is deleted, the MyOptionalTrack entity isn’t deleted.
+    - you use the IsRequired method to make the Required one-to-one navigational property, ach Attendee entity must have a MyRequiredTrack entity assigned to the Required property.
+    - **The Fluent API configuration of the Attendee entity class**
+      ```
+        public void Configure(EntityTypeBuilder<Attendee> entity)
+      {
+          entity.HasOne(attendee => attendee.Ticket)     
+              .WithOne(attendee => attendee.Attendee)
+              .HasForeignKey<Attendee>
+                  (attendee => attendee.TicketId)        
+              .IsRequired();
+      
+          entity.HasOne(attendee => attendee.Required)   
+              .WithOne(attendee => attendee.Attend)
+              .HasForeignKey<Attendee>("MyShadowFk")                          
+              .IsRequired();                             
+      }
+      ```
+      _Uses the HasForeignKey<T> method, which takes a string because it’s a shadow property and can be referred to only via a name. Note that you use your own name., The string parameter of the HasForeignKey<T>(string) method allows you to define the shadow foreign-key property name._
+  ##### HasPrincipalKey: Using an alternate unique key
+    - it is a unique value but not the primary key
+    - I gave an example of an alternate key called UniqueISBN, which represents a unique key that isn’t the primary key
+    - Example 
+       a Person entity class, which uses a normal int primary key, but you’ll use the UserId as an alternate key when linking to the person’s contact information
+       ```
+        public class Person
+        {
+            public int PersonId { get; set; }
+        
+            public string Name { get; set; }
+            // Holds the person’s unique Id
+            public Guid UserId { get; set; }                
+            // Navigational property linking to the ContactInfo
+            public ContactInfo ContactInfo { get; set; }    
+        }
 
+        public class ContactInfo
+        {
+          public int ContactInfoId { get; set; }
+
+          public string MobileNumber { get; set; }
+          public string LandlineNumber { get; set; }
+
+          public Guid UserIdentifier { get; set; }     
+        }
+       ```
+      - the alternate key in the Person entity class as a foreign key in the ContactInfo entity class.
+      <img src="../../../../images/development/EF/11.png" />
+      - You can have composite alternate keys, which are made up of two or more properties. You handle them in the same way that you do composite keys: by using an anonymous Type, such as
+      ```
+      HasPrincipalKey<MyClass>(c => new {c.Part1, c.Part2}).
+      ```
+      - Unique keys ensure that each entry is unique; they can’t be used in a foreign key.
+      - Unique keys can be null, but alternate keys can’t.
+      - Unique key values can be updated, but alternate keys can’t. (See EF Core issue [#4073 at](http://mng.bz/vzEM)
+      - You can define a property as a standalone alternate key by using the Fluent API command, but you don’t need to do that, because using the HasPrincipalKey method to set up a relationship automatically registers the property as an alternate key.
+      ```modelBuilder.Entity<Car>().HasAlternateKey(c => c.LicensePlate)```
 ##### table hierarchy tph vs tpt? 
