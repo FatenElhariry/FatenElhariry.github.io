@@ -6,6 +6,8 @@ categories: development
 tags: development
 ---
 
+_all mentioned topics will be implemented in this [demo](https://github.com/FatenElhariry/EFInDepth)_
+
 #### What type of configuration run at the first time the dbcontext used 
    first time you use the application’s DbContext where are three configuration approaches: By Convention, Data Annotations, and the Fluent API will be discovered 
     - convention 
@@ -590,9 +592,229 @@ tags: development
       }
       ```
       _ tells EF Core to store the owned type, Address, in a separate table, with a primary key equal to the primary key of the User entity that was saved to the database._
+
+  - **Table per hierarchy (TPH)** 
+    Allows a set of inherited classes to be saved in one table, such as classes called Dog, Cat, and Rabbit that inherit from the Animal class.
+    stores all the classes that inherit from one another in a single database table
+    ```
+      public class PaymentCash
+      {
+          [Key]
+          public int PaymentId { get; set; }
+          public decimal Amount { get; set; }
+      } 
       
-  - **Table per hierarchy (TPH)** Allows a set of inherited classes to be saved in one table, such as classes called Dog, Cat, and Rabbit that inherit from the Animal class.
+      //PaymentCredit - inherits from PaymentCash
+      public class PaymentCard : PaymentCash
+      {
+          public string ReceiptCode { get; set; }
+      }
+
+      // in db context and there is no other configuration needed  
+       //Table-per-hierarchy
+      public DbSet<PaymentCash> CashPayments { get; set; }
+      public DbSet<PaymentCard> CreditPayments { get; set; }
+
+    ```
+    _the output is_
+    ```
+      CREATE TABLE [CashPayments] (
+          [PaymentId] int NOT NULL IDENTITY,
+          [Amount] decimal(18, 2) NOT NULL,
+          [Discriminator] nvarchar(max) NOT NULL,   
+          [ReceiptCode] nvarchar(max),              
+          CONSTRAINT [PK_CashPayments] PRIMARY KEY ([PaymentId])
+      );
+    ```
+    **As you can see, EF Core has added a Discriminator column, which it uses when returning data to create the correct type of class: PaymentCash or PaymentCard, based on what was saved. Also, the ReceiptCode column is filled/read only if the class type is PaymentCard.**
+    - Any scalar properties not in the TPH base class are mapped to nullable columns because those properties are used by only one version of the TPH’s classes
+    - more useful way 
+      <img src="../../../../images/development/EF/12.png" />
+      - This approach is much more useful because now you can place a Payment abstract class in the SoldIt entity class and get the amount and type of payment, whether it’s cash or a card. 
+      - The PType property tells you the type (the PType property is of type PTypes, which is an enum with values Cash or Card), and if you need the Receipt property in the PaymentCard, you can cast the Payment class to the type PaymentCard.
+      ```
+        public class Chapter08DbContext : DbContext
+        {
+            //... other DbSet<T> properties removed 
+            // List of sold items, with a required link to Payment
+            public DbSet<Payment> Payments { get; set; }     
+            public DbSet<SoldIt> SoldThings { get; set; }    
+        
+            public Chapter08DbContext(DbContextOptions<Chapter08DbContext> options): base(options)
+            { }
+        
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
+            {
+                //... other configurations removed
+                modelBuilder.Entity<Payment>()
+                  .HasDiscriminator(b => b.PType)           
+                  .HasValue<PaymentCash>(PTypes.Cash)       
+                  .HasValue<PaymentCard>(PTypes.Card);      
+            }
+        }
+      ```
+      - The HasDiscriminator method identifies the entity as a TPH and then selects the property PType as the discriminator for the different types. In this case, it’s an enum, which you set to be bytes in size.
+      - This example uses an abstract class as the base class, which I think is more useful, but it could just as well keep the original PaymentCash, with the PaymentCard inheriting from it. An abstract base class makes it easier to alter the common TPH properties.
+      - how to deal with CRUD Operations 
+      ```
+        var sold = new SoldIt()
+        {
+            WhatSold = "A hat",
+            Payment = new PaymentCash {Amount = 12}
+        };
+        context.Add(sold);
+        context.SaveChanges();
+      ```
+      - Then EF Core saves the correct version of data for that type and sets the discriminator so that it knows the TPH class type of the instance.
+      - When you read back the SoldIt entity you just saved, with an Include to load the Payment navigational property, the type of the loaded Payment instance will be the correct type (PaymentCash or PaymentCard), depending on what was used when you wrote it to the database. Also, in this example the Payment’s property PType, which you set as the discriminator, tells you the type of payment: Cash or Card.
+      - When you query TPH data, the EF Core OfType<T> method allows you to filter the data 
+      ```
+        context.Payments.OfType<PaymentCard>()
+      ```
+      - You can also filter TPH classes in Includes. See this article for [more information](https://learn.microsoft.com/en-us/ef/core/querying/related-data/#include-on-derived-types)
   - **Table per type (TPT)** Maps each class to a different table. This approach works like TPH except that each class is mapped to a separate table.
+  - which allows each entity class inherited from a base class to have its own table. This option is the opposite of the table per hierarchy (TPH) approach
+  - TPH is better when each inherited class has a large common part and only a small amount of per-class data.
+
   - **Table splitting** Allows multiple entity classes to be mapped to the same table and is useful when some columns in a table are read more often than all the table columns.
+  - The three classes used in the TPT example
+    ```
+    public abstract class Container             
+    {
+        [Key]
+        public int ContainerId { get; set; }    
+    
+        public int HeightMm { get; set; }       
+        public int WidthMm { get; set; }        
+        public int DepthMm { get; set; }        
+    }
+    
+    public class ShippingContainer : Container  
+    {
+        public int ThicknessMm { get; set; }    
+        public string DoorType { get; set; }    
+        public int StackingMax { get; set; }    
+        public bool Refrigerated { get; set; }  
+    }
+    
+    public class PlasticContainer : Container   
+    {
+        public int CapacityMl { get; set; }     
+        public Shapes Shape { get; set; }       
+        public string ColorARGB { get; set; }   
+    }
+    ```
+    _The Container class is marked as abstract because it won’t be created_
+    - The updates to the application’s DbContext to set up the TPT containers
+      ```
+      public class Chapter08DbContext : DbContext
+      {
+        public Chapter08DbContext(DbContextOptions<Chapter08DbContext> options): base(options)
+        { }
+
+        //... other DbSet<T> removed for clarity
+        public DbSet<Container> Containers { get; set; }    
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //... other configrations removed for clarity
+            modelBuilder.Entity<ShippingContainer>()        
+                .ToTable(nameof(ShippingContainer));        
+            modelBuilder.Entity<PlasticContainer>()         
+                .ToTable(nameof(PlasticContainer));         
+        }
+      ```
+      _the magic comes when you query the DbSet<Container> Containers in the application’s DbContext, because it returns all the containers using the correct class type, ShippingContainer or PlasticContainer, for each entity returned._
+      - Read all query — `context.Containers.ToList()`
+        - This option reads in all the TPT types, and each entry in the list will be of the correct type (ShippingContainer or PlasticContainer) for the type it returns. This option is useful only if you want to list a summary of all the containers.
+      - OfType query— `context.Containers.OfType<ShippingContainer>().ToList()`
+        - This option reads in only the entries that are of the type ShippingContainer.
+      - Set query— `context.Set<ShippingContainer>().ToList()`
+        - This option returns only the ShippingContainer type (just like the OfType query), but the SQL is slightly more efficient than the OfType query.
+  - **Table splitting: Mapping multiple entity classes to the same table**
+      called table splitting, allows you to map multiple entities to the same table. This feature is useful if you have a large amount of data to store for one entity, but your normal queries to this entity need only a few columns
+      -  will be quicker because you’re loading only a subsection of the whole entity’s data
+      - It can also make updates quicker by splitting the table across two or more classes.
+        <img src="../../../../images/development/EF/13.png" />
+        ```
+          public class SplitOwnDbContext : DbContext
+          {
+              //... other code removed
+          
+              protected override void OnModelCreating(ModelBuilder modelBuilder)
+              {
+                  modelBuilder.Entity<BookSummary>()   
+                    .HasOne(e => e.Details)           
+                    .WithOne()                        
+                    .HasForeignKey<BookDetail>        
+                          (e => e.BookDetailId);      
+                  modelBuilder.Entity<BookSummary>()   
+                    .ToTable("Books");                
+                                                      
+                  modelBuilder.Entity<BookDetail>()    
+                    .ToTable("Books");                
+              }
+          }
+        ```
+        _two books as having a relationship in the same way that you’d set up a one-to-one relationship,  You must map both entity classes to the Books table to trigger the table splitting._
+        - After you’ve configured the two entities as a table split, you can query the BookSummary entity on its own and get the summary parts or the other part or even include both.  
+        - **some great notes**
+          - You can update an individual entity class in a table split individually; you don’t have to load all the entities involved in a table split to do an update.
+          - You’ve seen a table split to two entity classes, but you can table-split any number of entity classes.
   - **Property bags** —Allows you to create an entity class via a Dictionary, which gives you the option to create the mapping on startup. Property bags also use two other features: mapping the same type to multiple tables and using an indexer in your entity classes.
+    _EF Core 5 added a feature called a property bag that uses a Dictionary<string, object> type to map to the database. A property bag is used to implement the direct many-to-many relationship feature, where the linking table had to be created at configuration time._
+    - **A property bag uses two features**
+      - The first feature is shared entity types, where the same type can be mapped to multiple tables
+      - The second feature uses a C# indexer property in an entity class to access data, such as public object this[string key]
+      - **Using a property-bag Dictionary to define a table on startup**
+        ```
+        public class PropertyBagsDbContext : DbContext
+        {
+            private readonly TableSpec _tableSpec;                    
+        
+            public PropertyBagsDbContext(DbContextOptions<PropertyBagsDbContext> options, TableSpec tableSpec): base(options)
+            {
+                _tableSpec = tableSpec;                               
+            }
+        
+            public DbSet<Dictionary<string, object>> MyTable          
+                => Set<Dictionary<string, object>>(_tableSpec.Name);  
+        
+            protected override void OnModelCreating(ModelBuilder modelBuilder)
+            { 
+                modelBuilder.SharedTypeEntity<Dictionary<string, object>>(_tableSpec.Name, b =>                         
+                {
+                    foreach (var prop in _tableSpec.Properties)       
+                    {
+                        var propConfig = b.IndexerProperty(           
+                            prop.PropType, prop.Name);                
+                        if (prop.AddRequired)                         
+                            propConfig.IsRequired();                  
+                    }
+                }).Model.AddAnnotation("Table", _tableSpec.Name);     
+            } 
+        }
+        ```
+        _The DbSet called MyTable links to the SharedType entity built in OnModelCreating,Defines a SharedType entity type, which allows the same type to be mapped to multiple tables, You give this shared entity type a name so that you can refer to it._
+        - TableSpec class must be the same every time because EF Core caches the configuration
+        - The property-bag entity’s configuration is fixed for the whole time the application is running
+        - To access the property-bag entity, you use the MyTable property 
+        - **Adding and querying a property bag**
+          ```
+          var propBag = new Dictionary<string, object>     
+          {
+              ["Title"] = "My book",                       
+              ["Price"] = 123.0                            
+          };
+          context.MyTable.Add(propBag);                    
+          context.SaveChanges();                           
+          
+          var readInPropBag = context.MyTable.Single(x => (int)x["Id"] == 1);             
+          
+          var title = readInPropBag["Title"];    
+          ```
+        - A property bag’s property names follow By Convention naming. The primary key is "Id", for example. But you can override this setting with Fluent API commands as usual.
+        - You can have multiple property bags. The SharedTypeEntity Fluent API method allows you to map the same type to different tables.
+        - A property bag can have relationships to other classes or property bags. You use the HasOne/HasMany Fluent API methods, but you can’t define navigational properties in a property bag.
+        - You don’t have to set every property in the dictionary when you add a property-bag entity. Any properties/columns not set will be set to the type’s default value.
 ##### table hierarchy tph vs tpt? 
