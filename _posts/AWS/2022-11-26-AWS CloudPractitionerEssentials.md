@@ -65,4 +65,41 @@ tags: aws
     _Suppose that you have a background processing job that can start and stop as needed (such as the data processing job for a customer survey).You want to start and stop the processing job without affecting the overall operations of your business. If you make a Spot request and Amazon EC2 capacity is available, your Spot Instance launches. However, if you make a Spot request and Amazon EC2 capacity is unavailable, the request is not successful until capacity becomes available. The unavailable capacity might delay the launch of your background processing job._
   - **Dedicated Hosts**
     are physical servers with Amazon EC2 instance capacity that is fully dedicated to your use. 
+##### Scaling 
+  - **Dynamic scaling** responds to changing demand.
+  - **Predictive scaling** automatically schedules the right number of Amazon EC2 instances based on predicted demand.  
+  ____
+  - **Elastic Load Balancing**
+    is the AWS service that automatically distributes incoming application traffic across multiple resources, such as Amazon EC2 instances. 
 
+    _A load balancer acts as a single point of contact for all incoming web traffic to your Auto Scaling group. This means that as you add or remove Amazon EC2 instances in response to the amount of incoming traffic, these requests route to the load balancer first. Then, the requests spread across multiple resources that will handle them._
+    - **Low-demand period**
+    - **High-demand period**
+###### Messaging and queuing
+  it is like a buffer between applications to handle the communication between systems if the applications are directly communicated with each other this called **tightly coupled architecture/ monolithic application.** &rarr; a single component fails, in this case if one application has a failure it may cause failure to all other applications 
+  - amazon simple queue service (SQS)
+    - send messages, store messages, and receive messages between software component at any volume (without missing)
+    - data that is contained in message it called payload it is protected untill delivery 
+    - this realiable and easy to configure and used  
+  - amazon simple notification service (SNS)
+    it used a publish & subscribe model 
+    - client can be other AWS services (Lambda function or any other service)
+    - can push notification to end user with mobile 
+
+- **other computing service**
+  instead of setup and manage EC2 virtual machines(updates, ....)
+  - **serverless**
+    you cann't see or access the underlying infrastructure for the application (scaling, high avaliablity)
+    - **lambda function**
+      here you define a trigger and the service wait for the trigger the code will be automatically run in a managed environment 
+      - it is designed for running code under 15mins it is not good for long running process 
+    - **container orchestration tools**
+      - **amazone Elastic container service (amazone ECS)**
+      - **amazone Elastic kubernetes service (amazon EKS)**
+      it works with docker where docker can run your application and any configuration you need 
+      container run in EC2 with isoluation 
+      - **AWS Fargate** &rarr; instead of running docker in EC2 instance use to manage the underlying infrastructure for docker 
+        a serverless compute engine for containers. It works with both Amazon ECS and Amazon EKS. 
+        you do not need to provision or manage servers. AWS Fargate manages your server infrastructure for you. You can focus more on innovating and developing your applications, and you pay only for the resources that are required to run your containers.
+- **AWS Outposts**
+  is a family of fully managed solutions delivering AWS infrastructure and services to virtually any on-premises or edge location for a truly consistent hybrid experience.
