@@ -1,0 +1,1 @@
+- reading about NLP and getting the meaning of self attention
