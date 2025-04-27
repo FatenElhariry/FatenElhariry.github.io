@@ -7,17 +7,17 @@ permalink: /posts/IIS/URLRwrite
 [mod_rewrite Cheat Sheet by DaveChild](https://cheatography.com/davechild/cheat-sheets/mod-rewrite/)
 
 - Components 
-![alt text](imgs\url_rewite_components.jpg)
+![alt text](/images/aws/url_rewite_components.jpg)
 
 
 - list of predefined actions  
-![defined rules](image.png)
+![defined rules](/images/aws/image.png)
 
 - https  redirect  
-![redirect](imgs\https_redirect.jpg)
+![redirect](/images/aws/https_redirect.jpg)
 
 - redirect to a custom maintaince page 
-![alt text](imgs\image-1.png)
+![alt text](/images/aws/simage-1.png)
 
 
 
