@@ -2,7 +2,7 @@
 layout: post
 title: IIS
 author: Faten Elhariry
-permalink: /posts/IIS/URLRewrite  
+permalink: /posts/IIS/URLRewrite
 ---
 [mod_rewrite Cheat Sheet by DaveChild](https://cheatography.com/davechild/cheat-sheets/mod-rewrite/)
 
