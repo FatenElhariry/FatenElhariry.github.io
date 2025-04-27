@@ -1,3 +1,9 @@
+---
+layout: post
+title: IIS
+author: Faten Elhariry
+permalink: /posts/IIS/URLRwrite
+---
 [mod_rewrite Cheat Sheet by DaveChild](https://cheatography.com/davechild/cheat-sheets/mod-rewrite/)
 
 - Components 
