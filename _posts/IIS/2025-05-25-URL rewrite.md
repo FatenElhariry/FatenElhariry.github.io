@@ -2,7 +2,7 @@
 layout: post
 title: IIS
 author: Faten Elhariry
-permalink: /posts/IIS/URLRewrite
+permalink: /posts/IIS/urlRewrite
 ---
 [mod_rewrite Cheat Sheet by DaveChild](https://cheatography.com/davechild/cheat-sheets/mod-rewrite/)
 
@@ -16,8 +16,11 @@ permalink: /posts/IIS/URLRewrite
 - https  redirect  
 ![redirect](/images/IIS/https_redirect.jpg)
 
-- redirect to a custom maintaince page 
-![alt text](/images/IIS/simage-1 copy.png)
+- remove aspx from the url 
+![remove aspx from request](/images/IIS/removeASPX.png)
+
+- redirect to a custom maintaince page   
+![alt text](/images/IIS/image-1 copy.png)
 
 
 
